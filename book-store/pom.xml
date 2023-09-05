@@ -18,7 +18,7 @@
 		<sonar.host.url>http://20.51.222.120:9000</sonar.host.url>
 		<!--sonar.login>admin</sonar.login-->
   		<!--<sonar.password>Member147@&$</sonar.password>-->
-		<sonar.token>MyVHdOsJds7HUqnJ6EWfKBftIuflkQHWNgqkmtoRNBE=</sonar.token>
+		<sonar.token>sqp_184665bb6340360a916a7fcb37713434fb054f2e</sonar.token>
 	</properties>
 	<dependencies>
 		<dependency>
