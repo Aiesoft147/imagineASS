@@ -1,1 +1,76 @@
-node
+pipeline {
+    agent any
+
+    
+    environment {
+        DOCKER_REGISTRY = 'your-docker-registry-url'
+        DOCKER_IMAGE_NAME = 'your-docker-image-name'
+        HELM_CHART_NAME = 'your-helm-chart-name'
+        K8S_NAMESPACE = 'your-kubernetes-namespace'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Check out your source code from version control (e.g., Git)
+                checkout scmGit(branches: [[name: '*/Main']], extensions: [], userRemoteConfigs: [[credentialsId: 'cc4b7c07-ca4c-4757-9181-cb50c49c6eb6', url: 'https://github.com/Aiesoft147/imagineASS.git']])
+            }
+        }
+
+        stage('Build') {
+            steps {
+                // Build the Spring Boot application
+                sh './mvnw clean package'  // Use Maven Wrapper if available
+            }
+        }
+
+        stage('Test') {
+            steps {
+                // Run tests (unit tests, integration tests, etc.)
+                sh './mvnw test'  // Adjust this command based on your testing framework
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
+                // Run SonarQube analysis using the SonarScanner for Maven
+                sh './mvnw sonar:sonar'
+            }
+        }
+
+        stage('Package') {
+            steps {
+                // Package the Spring Boot application
+                sh './mvnw package'  // Adjust this command if needed
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                // Deploy the application to your environment (e.g., staging or production)
+                // You can use tools like Docker, Kubernetes, or any deployment method you prefer
+                // Example: Deploy to Kubernetes
+                sh 'kubectl apply -f deployment.yaml'  // Adjust as per your deployment setup
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                // Perform any necessary cleanup tasks
+            }
+        }
+    }
+
+    post {
+        success {
+            // Notify on success (e.g., send notifications)
+            // Example: Send a Slack notification
+            slackSend channel: '#your-channel', message: 'Deployment successful!'
+        }
+        failure {
+            // Notify on failure
+            // Example: Send a Slack notification
+            slackSend channel: '#your-channel', message: 'Deployment failed!'
+        }
+    }
+}
